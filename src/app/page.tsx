@@ -3,16 +3,18 @@ import { Item, ItemAccess } from "./api/items/route";
 export default async function Home() {
   let items: Item[] = [];
 
-  const response = await fetch(`${process.env.API_URL}/api/items`);
+  const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });
+
   if (response.ok) {
     const itemsJson = await response.json();
     if (itemsJson && itemsJson.length > 0) {
       items = itemsJson;
+      console.log(items);
     }
   }
 
   return (
-    <div className="">
+    <div>
       <h1 className="text-xl font-bold">Homepage</h1>
 
       {items.map((item) => {
