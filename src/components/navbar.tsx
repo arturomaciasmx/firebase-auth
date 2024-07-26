@@ -35,8 +35,13 @@ export default function Navbar() {
       {auth?.currentUser && (
         <div className="mb-8">
           <p>Logged in as {auth.currentUser.email}</p>
-          {auth.isAdmin && <p>Admin</p>}
-          {auth.isPro && <p>Pro</p>}
+          {auth.isAdmin && <p className="bg-pink-700 p-2 rounded text-white">Admin</p>}
+          {auth.isPro && !auth.isAdmin && (
+            <p className="bg-green-600 p-2 rounded text-white">Pro</p>
+          )}
+          {!auth.isAdmin && !auth.isPro && (
+            <p className="bg-gray-600 p-2 rounded text-white">User</p>
+          )}
         </div>
       )}
       <ul className="flex gap-4">

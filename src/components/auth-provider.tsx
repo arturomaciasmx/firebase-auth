@@ -25,9 +25,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return auth.onAuthStateChanged(async (user) => {
       if (!user) {
         setCurrentUser(null);
+        setIsAdmin(false);
+        setIsPro(false);
       }
       if (user) {
         setCurrentUser(user);
+        const tokenValues = await user.getIdTokenResult();
+        setIsAdmin(tokenValues.claims.role === "admin");
+        console.log(tokenValues.claims);
+
+        const userResponse = await fetch(`/api/users/${user.uid}`);
+        if (userResponse.ok) {
+          const userJson = await userResponse.json();
+          setIsPro(userJson.isPro);
+        } else {
+          console.error("Failed to fetch user data");
+        }
       }
     });
   }, []);
