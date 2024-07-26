@@ -9,7 +9,6 @@ export default async function Home() {
     const itemsJson = await response.json();
     if (itemsJson && itemsJson.length > 0) {
       items = itemsJson;
-      console.log(items);
     }
   }
 
