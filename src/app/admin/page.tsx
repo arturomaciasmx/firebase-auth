@@ -1,6 +1,33 @@
+import { cookies } from "next/headers";
 import { Item, ItemAccess } from "../api/items/route";
+import { DecodedIdToken } from "firebase-admin/auth";
+import { auth } from "../../../firebase/server";
 
 export default async function AdminPage() {
+  const cookieStore = cookies();
+  const authToken = cookieStore.get("firebaseIdToken")?.value;
+
+  if (!authToken || !auth) {
+    return <div className="text-red-600 text-2xl">Unauthorized</div>;
+  }
+
+  let user: DecodedIdToken | null = null;
+
+  try {
+    user = await auth.verifyIdToken(authToken);
+  } catch (error) {
+    console.error(error);
+  }
+
+  if (!user) {
+    return <div className="text-red-600 text-2xl">Unauthorized</div>;
+  }
+
+  const isAdmin = user.role;
+  if (!isAdmin) {
+    return <div className="text-red-600 text-2xl">Unauthorized</div>;
+  }
+
   let items: Item[] = [];
 
   const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });

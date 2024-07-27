@@ -3,6 +3,19 @@ import { User } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../firebase/client";
+import Cookies from "js-cookie";
+
+export function getAuthToken(): string | undefined {
+  return Cookies.get("firebaseIdToken");
+}
+
+export function setAuthToken(token: string): string | undefined {
+  return Cookies.set("firebaseIdToken", token, { secure: true });
+}
+
+export function removeAuthToken(): void {
+  Cookies.remove("firebaseIdToken");
+}
 
 type AuthContextType = {
   currentUser: User | null;
@@ -27,12 +40,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setCurrentUser(null);
         setIsAdmin(false);
         setIsPro(false);
+        removeAuthToken();
       }
       if (user) {
+        const token = await user.getIdToken();
         setCurrentUser(user);
+        setAuthToken(token);
+
         const tokenValues = await user.getIdTokenResult();
         setIsAdmin(tokenValues.claims.role === "admin");
-        console.log(tokenValues.claims);
 
         const userResponse = await fetch(`/api/users/${user.uid}`);
         if (userResponse.ok) {

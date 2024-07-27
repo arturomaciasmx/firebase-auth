@@ -1,6 +1,14 @@
+import { cookies } from "next/headers";
 import { Item, ItemAccess } from "../api/items/route";
 
 export default async function UserPage() {
+  const cookieStore = cookies();
+  const authToken = cookieStore.get("firebaseIdToken");
+
+  if (!authToken) {
+    return <div className="text-red-600 text-2xl">Unauthorized</div>;
+  }
+
   let items: Item[] = [];
 
   const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });
