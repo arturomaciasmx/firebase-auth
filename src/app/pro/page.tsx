@@ -20,7 +20,10 @@ export default async function ProPage() {
   }
 
   let userInfo = null;
-  const userInfoResponse = await fetch(`${process.env.API_URL}/api/users/${user?.uid}`);
+  const userInfoResponse = await fetch(`${process.env.API_URL}/api/users/${user?.uid}`, {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
   if (userInfoResponse.ok) {
     userInfo = await userInfoResponse.json();
   }
@@ -33,7 +36,11 @@ export default async function ProPage() {
 
   let items: Item[] = [];
 
-  const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });
+  const response = await fetch(`${process.env.API_URL}/api/items`, {
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
   if (response.ok) {
     const itemsJson = await response.json();
     if (itemsJson && itemsJson.length > 0) {

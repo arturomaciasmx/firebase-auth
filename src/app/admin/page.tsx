@@ -30,7 +30,11 @@ export default async function AdminPage() {
 
   let items: Item[] = [];
 
-  const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });
+  const response = await fetch(`${process.env.API_URL}/api/items`, {
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
   if (response.ok) {
     const itemsJson = await response.json();
     if (itemsJson && itemsJson.length > 0) {

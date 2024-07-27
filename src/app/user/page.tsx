@@ -3,7 +3,7 @@ import { Item, ItemAccess } from "../api/items/route";
 
 export default async function UserPage() {
   const cookieStore = cookies();
-  const authToken = cookieStore.get("firebaseIdToken");
+  const authToken = cookieStore.get("firebaseIdToken")?.value;
 
   if (!authToken) {
     return <div className="text-red-600 text-2xl">Unauthorized</div>;
@@ -11,7 +11,11 @@ export default async function UserPage() {
 
   let items: Item[] = [];
 
-  const response = await fetch(`${process.env.API_URL}/api/items`, { cache: "no-store" });
+  const response = await fetch(`${process.env.API_URL}/api/items`, {
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
   if (response.ok) {
     const itemsJson = await response.json();
     if (itemsJson && itemsJson.length > 0) {

@@ -50,7 +50,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const tokenValues = await user.getIdTokenResult();
         setIsAdmin(tokenValues.claims.role === "admin");
 
-        const userResponse = await fetch(`/api/users/${user.uid}`);
+        const userResponse = await fetch(`/api/users/${user.uid}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (userResponse.ok) {
           const userJson = await userResponse.json();
           setIsPro(userJson.isPro);
